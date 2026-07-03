@@ -1,0 +1,19 @@
+Creating Session:
+POST http://localhost:8000/apps/hello_agent/users/user_1/sessions/session_1
+
+Posting/Sending Message
+POST http://localhost:8000/run
+Body:
+{
+    "appName": "hello_agent",
+    "userId": "user_1",
+    "sessionId": "session_1",
+    "newMessage": {
+        "role": "user",
+        "parts": [
+            {
+                "text": "tell me about that city in 3 sentences"
+            }
+        ]
+    }
+}
