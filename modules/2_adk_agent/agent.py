@@ -2,7 +2,6 @@ import asyncio
 from google.adk.agents import Agent
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
-from google.adk.models import LiteLlm
 from google.genai import types
 from dotenv import load_dotenv
 
@@ -14,7 +13,7 @@ SESSION_ID = "session_001"
 
 agent = Agent(
     name = "helpful_agent",
-    model=LiteLlm(model="openai/gpt-4o-mini"),
+    model="openai/gpt-4o-mini",
     description="A helpful assistant that answers user questions",
     instruction="You are a friendly and concise assistant. Answer user questions clearly"
 )
