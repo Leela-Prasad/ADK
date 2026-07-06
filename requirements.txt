@@ -3,3 +3,5 @@ litellm
 
 langchain-community
 wikipedia
+
+crewai-tools
