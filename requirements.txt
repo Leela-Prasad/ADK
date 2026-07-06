@@ -1,2 +1,5 @@
 google-adk==1.23.0
 litellm
+
+langchain-community
+wikipedia
