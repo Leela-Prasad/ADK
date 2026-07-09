@@ -1,0 +1,80 @@
+Session Level
+
+tool_context.state[key] = value
+(app_name, user_id, session_id)
+
+User Level
+
+USER_STORE = {}
+def save_preference(key: str, value: str, tool_context: ToolContext) -> dict:
+    user_id = tool_context.user_id
+
+    # session-level
+    tool_context.state[key] = value
+
+    # user-level
+    if user_id not in USER_STORE:
+        USER_STORE[user_id] = {}
+    USER_STORE[user_id][key] = value
+
+    return {"status": "saved", "scope": "session+user", "key": key}
+
+def get_preference(key: str, tool_context: ToolContext) -> dict:
+    user_id = tool_context.user_id
+
+    # 1. Check session
+    if key in tool_context.state:
+        return {"scope": "session", "value": tool_context.state[key]}
+
+    # 2. Check user-level
+    if user_id in USER_STORE and key in USER_STORE[user_id]:
+        return {"scope": "user", "value": USER_STORE[user_id][key]}
+
+    return {"status": "not_found"}
+
+
+App Level
+APP_STORE = {
+    "theme": "light",
+    "language": "english"
+}
+
+def get_preference(key: str, tool_context: ToolContext) -> dict:
+    user_id = tool_context.user_id
+
+    if key in tool_context.state:
+        return {"scope": "session", "value": tool_context.state[key]}
+
+    if user_id in USER_STORE and key in USER_STORE[user_id]:
+        return {"scope": "user", "value": USER_STORE[user_id][key]}
+
+    if key in APP_STORE:
+        return {"scope": "app_default", "value": APP_STORE[key]}
+
+    return {"status": "not_found"}
+
+
+Mixing All Levels
+
+class PreferenceService:
+
+    def __init__(self):
+        self.user_store = {}
+        self.app_store = {"theme": "light"}
+
+    def save(self, key, value, tool_context):
+        user_id = tool_context.user_id
+
+        tool_context.state[key] = value
+
+        self.user_store.setdefault(user_id, {})[key] = value
+
+    def get(self, key, tool_context):
+        user_id = tool_context.user_id
+
+        return (
+            tool_context.state.get(key)
+            or self.user_store.get(user_id, {}).get(key)
+            or self.app_store.get(key)
+        )
+
